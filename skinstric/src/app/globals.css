@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Design tokens — pulled directly from Figma "Skinstric" file,
+   frame 000 (landing / hero). Update here if Figma values change.
+----------------------------------------------------------------- */
+:root {
+  --color-canvas: #fcfcfc; /* rgba(252,252,252,1) — frame background */
+  --color-ink: #1a1b1c; /* rgba(26,27,28,1) — primary text */
+  --color-diamond-border: rgba(160, 164, 171, 1);
+
+ 
+  --font-display: "Roobert TRIAL", "General Sans", "Inter", ui-sans-serif,
+    system-ui, sans-serif;
+}
+
+@theme inline {
+  --color-canvas: var(--color-canvas);
+  --color-ink: var(--color-ink);
+  --font-display: var(--font-display);
+
+  --text-h1-1920: 128px;
+  --text-h1-1920--line-height: 120%;
+  --text-h1-1920--letter-spacing: -0.07em;
+
+  --text-caption-1920: 14px;
+  --text-caption-1920--line-height: 24px;
+  --text-caption-1920--letter-spacing: 0em;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
