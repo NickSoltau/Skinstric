@@ -17,6 +17,7 @@
 @theme inline {
   --color-canvas: var(--color-canvas);
   --color-ink: var(--color-ink);
+  --color-diamond-border: var(--color-diamond-border);
   --font-display: var(--font-display);
 
   --text-h1-1920: 128px;
@@ -26,6 +27,14 @@
   --text-caption-1920: 14px;
   --text-caption-1920--line-height: 24px;
   --text-caption-1920--letter-spacing: 0em;
+
+  --text-eyebrow-1920: 16px;
+  --text-eyebrow-1920--line-height: 24px;
+  --text-eyebrow-1920--letter-spacing: -0.02em;
+
+  --text-h3-1920: 60px;
+  --text-h3-1920--line-height: 64px;
+  --text-h3-1920--letter-spacing: -0.07em;
 }
 
 * {
@@ -42,6 +51,25 @@ body {
   color: var(--color-ink);
   font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
+}
+/* Placeholder text for /testing step inputs should read as full ink
+   color per Figma (the "Introduce Yourself" text layer itself),
+   not the browser's default washed-out placeholder gray. */
+.diamond-step-input::placeholder {
+  color: var(--color-ink);
+  opacity: 0.4;
+}
+@keyframes diamond-step-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.85);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

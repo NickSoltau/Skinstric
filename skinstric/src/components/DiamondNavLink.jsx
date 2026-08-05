@@ -30,7 +30,7 @@ function Arrow({ direction }) {
   );
 }
 
-export default function DiamondNavLink({ label, direction, href }) {
+export default function DiamondNavLink({ label, direction, href, onClick }) {
   const icon = (
     <span className="relative flex h-11 w-11 shrink-0 items-center justify-center">
       {/* rect-outer-line */}
@@ -50,9 +50,17 @@ export default function DiamondNavLink({ label, direction, href }) {
     </span>
   );
 
+  const handleClick = onClick
+    ? (event) => {
+        event.preventDefault();
+        onClick(event);
+      }
+    : undefined;
+
   return (
     
-      <a href={href}
+      <a href={href ?? "#"}
+      onClick={handleClick}
       className="group flex items-center gap-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-ink)]"
     >
       {direction === "left" ? (
