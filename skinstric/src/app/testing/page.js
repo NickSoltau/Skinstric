@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import DiamondStep from "@/components/DiamondStep";
+import ChoiceScreen from "./ChoiceScreen";
+
 
 const TEXT_PATTERN = /^[A-Za-z][A-Za-z\s'-]*$/;
 
@@ -17,7 +20,8 @@ function readSaved(key) {
 }
 
 export default function TestingPage() {
-  const [step, setStep] = useState("name");
+  const router = useRouter();
+  const [step, setStep] = useState("name"); // "name" | "location" | "choice"
   const [name, setName] = useState(() => readSaved(NAME_KEY));
   const [location, setLocation] = useState(() => readSaved(LOCATION_KEY));
   const [locationPhase, setLocationPhase] = useState("input");
@@ -30,6 +34,7 @@ export default function TestingPage() {
   const handleBack = () => {
     window.localStorage.removeItem(NAME_KEY);
     window.localStorage.removeItem(LOCATION_KEY);
+    router.push("/");
   };
 
   const handleNameEnter = () => {
@@ -64,8 +69,12 @@ export default function TestingPage() {
   };
 
   const handleProceedClick = () => {
-    console.log("Proceeding to Phase 2 (not built yet)");
+    setStep("choice");
   };
+
+  if (step === "choice") {
+    return <ChoiceScreen onBack={handleBack} />;
+  }
 
   if (step === "location") {
     return (
