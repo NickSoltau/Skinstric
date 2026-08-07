@@ -1,8 +1,21 @@
+"use client";
+
+import { useState } from "react";
+import CameraPermissionDialog from "@/components/CameraPermissionDialog";
 import ChoiceOption from "@/components/ChoiceOption";
 import DiamondNavLink from "@/components/DiamondNavLink";
 import SiteHeader from "@/components/SiteHeader";
 
-export default function ChoiceScreen({ onBack }) {
+export default function ChoiceScreen({ onBack, onCameraAllowed }) {
+  const [cameraDialogOpen, setCameraDialogOpen] = useState(false);
+
+  const handleCameraClick = () => setCameraDialogOpen(true);
+  const handleDeny = () => setCameraDialogOpen(false);
+  const handleAllow = () => {
+    setCameraDialogOpen(false);
+    onCameraAllowed?.();
+  };
+
   return (
     <main className="relative min-h-screen w-full overflow-hidden">
       <SiteHeader crumb="INTRO" />
@@ -21,13 +34,20 @@ export default function ChoiceScreen({ onBack }) {
 
       <ChoiceOption
         variant="camera"
-        href="#"
+        onClick={cameraDialogOpen ? undefined : handleCameraClick}
         centerXPercent={25}
         label={["ALLOW A.I.", "TO SCAN YOUR FACE"]}
         labelAlign="left"
         labelWidth={167}
         labelOffset={{ top: -115, left: 112 }}
         dotOffset={{ top: -95.5, left: 103.5 }}
+        ringSize={cameraDialogOpen ? 130.29 : 116.57}
+        circleSize={cameraDialogOpen ? 114 : 102}
+        overlay={
+          cameraDialogOpen ? (
+            <CameraPermissionDialog onDeny={handleDeny} onAllow={handleAllow} />
+          ) : null
+        }
       />
 
       <ChoiceOption
@@ -39,6 +59,7 @@ export default function ChoiceScreen({ onBack }) {
         labelWidth={136}
         labelOffset={{ top: 85, left: -247 }}
         dotOffset={{ top: 99, left: -103 }}
+        muted={cameraDialogOpen}
       />
 
       <div className="absolute inset-x-0 bottom-8 z-10 flex items-center justify-between px-8 md:bottom-10 md:px-10">

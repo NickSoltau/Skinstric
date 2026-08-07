@@ -13,9 +13,9 @@ export function ApertureIcon({ className }) {
   );
 }
 
-export function GalleryIcon({ className }) {
+export function GalleryIcon({ className, style }) {
   return (
-    <svg viewBox="0 0 100 100" className={className} fill="var(--color-ink)">
+    <svg viewBox="0 0 100 100" className={className} style={style} fill="currentColor">
       <circle cx="68" cy="32" r="9" />
       <path d="M8 78 L34 46 L52 66 L66 50 L92 78 Z" />
     </svg>

@@ -5,7 +5,7 @@ import SiteHeader from "@/components/SiteHeader";
 export default function Home() {
   return (
     <main className="relative min-h-screen w-full overflow-hidden">
-      <SiteHeader crumb="INTRO" />
+      <SiteHeader crumb="INTRO" showEnterCode />
 
       <DiamondBackdrop />
 

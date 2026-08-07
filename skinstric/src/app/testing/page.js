@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import DiamondStep from "@/components/DiamondStep";
 import ChoiceScreen from "./ChoiceScreen";
+import CameraSetupScreen from "./CameraSetupScreen";
 
 
 const TEXT_PATTERN = /^[A-Za-z][A-Za-z\s'-]*$/;
@@ -21,7 +22,7 @@ function readSaved(key) {
 
 export default function TestingPage() {
   const router = useRouter();
-  const [step, setStep] = useState("name"); // "name" | "location" | "choice"
+  const [step, setStep] = useState("name"); // "name" | "location" | "choice" | "camera-setup"
   const [name, setName] = useState(() => readSaved(NAME_KEY));
   const [location, setLocation] = useState(() => readSaved(LOCATION_KEY));
   const [locationPhase, setLocationPhase] = useState("input");
@@ -72,9 +73,18 @@ export default function TestingPage() {
     setStep("choice");
   };
 
-  if (step === "choice") {
-    return <ChoiceScreen onBack={handleBack} />;
+  if (step === "camera-setup") {
+    return <CameraSetupScreen />;
   }
+
+    if (step === "choice") {
+      return (
+        <ChoiceScreen
+          onBack={handleBack}
+          onCameraAllowed={() => setStep("camera-setup")}
+        />
+      );
+    }
 
   if (step === "location") {
     return (
