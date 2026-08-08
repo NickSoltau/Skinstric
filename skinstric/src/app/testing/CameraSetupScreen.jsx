@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect } from "react";
 import { ApertureIcon } from "@/components/ChoiceIcons";
 import CameraSetupDiamonds from "@/components/CameraSetupDiamonds";
 
@@ -10,7 +13,12 @@ function TipBullet() {
   );
 }
 
-export default function CameraSetupScreen() {
+export default function CameraSetupScreen({ onReady }) {
+  useEffect(() => {
+    const timer = setTimeout(() => onReady?.(), 1500);
+    return () => clearTimeout(timer);
+  }, [onReady]);
+
   return (
     <main className="relative min-h-screen w-full overflow-hidden">
       <CameraSetupDiamonds />

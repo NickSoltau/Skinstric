@@ -1,9 +1,11 @@
-export default function SiteHeader({ crumb, showEnterCode = false }) {
+export default function SiteHeader({ crumb, showEnterCode = false, light = false }) {
+  const color = light ? "var(--color-canvas)" : "var(--color-ink)";
+
   return (
     <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between px-8 py-6 md:px-10 md:py-8">
-      <div className="flex items-center gap-2 text-xs font-semibold tracking-wide">
+      <div className="flex items-center gap-2 text-xs font-semibold tracking-wide" style={{ color }}>
         <span>SKINSTRIC</span>
-        <span className="flex items-center gap-1 font-normal text-[var(--color-ink)]/60">
+        <span className="flex items-center gap-1 font-normal opacity-60">
           <span aria-hidden>[</span>
           <span className="tracking-wide">{crumb}</span>
           <span aria-hidden>]</span>

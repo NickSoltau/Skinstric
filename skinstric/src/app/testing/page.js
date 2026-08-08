@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import DiamondStep from "@/components/DiamondStep";
 import ChoiceScreen from "./ChoiceScreen";
 import CameraSetupScreen from "./CameraSetupScreen";
+import CameraCaptureScreen from "./CameraCaptureScreen"
+import PhotoConfirmScreen from "./PhotoConfirmScreen";
+import PreparingAnalysisScreen from "./PreparingAnalysisScreen";
 
 
 const TEXT_PATTERN = /^[A-Za-z][A-Za-z\s'-]*$/;
@@ -22,10 +25,11 @@ function readSaved(key) {
 
 export default function TestingPage() {
   const router = useRouter();
-  const [step, setStep] = useState("name"); // "name" | "location" | "choice" | "camera-setup"
+  const [step, setStep] = useState("name"); // "name" | "location" | "choice" | "camera-setup" | "camera-capture" | "photo-confirm"  | "preparing-analysis"
   const [name, setName] = useState(() => readSaved(NAME_KEY));
   const [location, setLocation] = useState(() => readSaved(LOCATION_KEY));
   const [locationPhase, setLocationPhase] = useState("input");
+  const [capturedImage, setCapturedImage] = useState(null);
 
   const trimmedName = name.trim();
   const trimmedLocation = location.trim();
@@ -73,8 +77,40 @@ export default function TestingPage() {
     setStep("choice");
   };
 
+ if (step === "preparing-analysis") {
+    return (
+      <PreparingAnalysisScreen
+        onReady={() => {
+          console.log("Analysis prepared (frame 012 not built yet)");
+        }}
+      />
+    );
+  }
+
+  if (step === "photo-confirm") {
+    return (
+      <PhotoConfirmScreen
+        capturedImage={capturedImage}
+        onBack={handleBack}
+        onProceed={() => setStep("preparing-analysis")}
+      />
+    );
+  }
+
+  if (step === "camera-capture") {
+      return (
+        <CameraCaptureScreen
+          onBack={handleBack}
+          onTakePicture={(dataUrl) => {
+            setCapturedImage(dataUrl);
+            setStep("photo-confirm");
+          }}
+        />
+      );
+    }
+
   if (step === "camera-setup") {
-    return <CameraSetupScreen />;
+    return <CameraSetupScreen onReady={() => setStep("camera-capture")} />;
   }
 
     if (step === "choice") {
