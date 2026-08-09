@@ -8,6 +8,8 @@ import CameraSetupScreen from "./CameraSetupScreen";
 import CameraCaptureScreen from "./CameraCaptureScreen"
 import PhotoConfirmScreen from "./PhotoConfirmScreen";
 import PreparingAnalysisScreen from "./PreparingAnalysisScreen";
+import AnalysisScreen from "./AnalysisScreen";
+import DemographicsScreen from "./DemographicsScreen";
 
 
 const TEXT_PATTERN = /^[A-Za-z][A-Za-z\s'-]*$/;
@@ -25,7 +27,7 @@ function readSaved(key) {
 
 export default function TestingPage() {
   const router = useRouter();
-  const [step, setStep] = useState("name"); // "name" | "location" | "choice" | "camera-setup" | "camera-capture" | "photo-confirm"  | "preparing-analysis"
+  const [step, setStep] = useState("name"); // "name" | "location" | "choice" | "camera-setup" | "camera-capture" | "photo-confirm"  | "preparing-analysis" | "preparing-analysis" | "analysis" | "analysis" | "demographics"
   const [name, setName] = useState(() => readSaved(NAME_KEY));
   const [location, setLocation] = useState(() => readSaved(LOCATION_KEY));
   const [locationPhase, setLocationPhase] = useState("input");
@@ -77,13 +79,37 @@ export default function TestingPage() {
     setStep("choice");
   };
 
- if (step === "preparing-analysis") {
+if (step === "demographics") {
     return (
-      <PreparingAnalysisScreen
-        onReady={() => {
-          console.log("Analysis prepared (frame 012 not built yet)");
+      <DemographicsScreen
+        onBack={handleBack}
+        onReset={() => console.log("Reset demographics selections")}
+        onConfirm={() => console.log("Confirm demographics (next screen not built yet)")}
+      />
+    );
+  }
+
+  if (step === "analysis") {
+    return (
+      <AnalysisScreen
+        onBack={handleBack}
+        onSelectQuadrant={(key) => {
+          if (key === "demographics") {
+            setStep("demographics");
+            return;
+          }
+          console.log("Selected quadrant:", key, "(detail screen not built yet)");
+        }}
+        onGetSummary={() => {
+          console.log("Get summary (final summary screen not built yet)");
         }}
       />
+    );
+  }
+
+  if (step === "preparing-analysis") {
+    return (
+      <PreparingAnalysisScreen onReady={() => setStep("analysis")} />
     );
   }
 
