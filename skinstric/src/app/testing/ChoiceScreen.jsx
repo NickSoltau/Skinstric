@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import CameraPermissionDialog from "@/components/CameraPermissionDialog";
 import ChoiceOption from "@/components/ChoiceOption";
 import DiamondNavLink from "@/components/DiamondNavLink";
 import SiteHeader from "@/components/SiteHeader";
 
-export default function ChoiceScreen({ onBack, onCameraAllowed }) {
+export default function ChoiceScreen({ onBack, onCameraAllowed, onGallerySelected }) {
   const [cameraDialogOpen, setCameraDialogOpen] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleCameraClick = () => setCameraDialogOpen(true);
   const handleDeny = () => setCameraDialogOpen(false);
@@ -16,9 +17,30 @@ export default function ChoiceScreen({ onBack, onCameraAllowed }) {
     onCameraAllowed?.();
   };
 
+  const handleGalleryClick = () => fileInputRef.current?.click();
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => onGallerySelected?.(reader.result);
+    reader.onerror = () => console.error("Failed to read selected image");
+    reader.readAsDataURL(file);
+  };
+
   return (
     <main className="relative min-h-screen w-full overflow-hidden">
       <SiteHeader crumb="INTRO" />
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
 
       <p
         className="absolute left-8 top-[86px] uppercase text-[var(--color-ink)] md:left-10"
@@ -52,7 +74,7 @@ export default function ChoiceScreen({ onBack, onCameraAllowed }) {
 
       <ChoiceOption
         variant="gallery"
-        href="#"
+        onClick={handleGalleryClick}
         centerXPercent={75}
         label={["ALLOW A.I.", "ACCESS GALLERY"]}
         labelAlign="right"

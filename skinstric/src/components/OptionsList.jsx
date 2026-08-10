@@ -13,11 +13,17 @@ function RadioMarker({ filled }) {
 export default function OptionsList({ heading, options, selectedKey, onSelect }) {
   return (
     <div
-      className="absolute border-t border-[var(--color-ink)]"
-      style={{ left: "75%", top: "31.667%", width: "23.333%", background: "rgba(243, 243, 244, 1)" }}
-    >
+        className="absolute border-t border-[var(--color-ink)]"
+        style={{
+          left: "75%",
+          top: "31.667%",
+          width: "23.333%",
+          height: "56.667%",
+          background: "rgba(243, 243, 244, 1)",
+        }}
+       >
       <div
-        className="flex items-center justify-between px-4 py-2 uppercase text-[var(--color-ink)]/80"
+        className="flex items-center justify-between px-4 py-1.5 uppercase text-[var(--color-ink)]/80"
         style={{ fontSize: 16, lineHeight: "24px", fontWeight: 500, letterSpacing: "-0.02em" }}
       >
         <span>{heading}</span>
@@ -31,7 +37,7 @@ export default function OptionsList({ heading, options, selectedKey, onSelect })
             key={key}
             type="button"
             onClick={() => onSelect?.(key)}
-            className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors"
+            className="flex w-full items-center justify-between px-4 py-2 text-left transition-colors"
             style={{ background: isSelected ? "var(--color-ink)" : "transparent" }}
           >
             <span className="flex items-center gap-3">

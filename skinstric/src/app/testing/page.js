@@ -32,6 +32,7 @@ export default function TestingPage() {
   const [location, setLocation] = useState(() => readSaved(LOCATION_KEY));
   const [locationPhase, setLocationPhase] = useState("input");
   const [capturedImage, setCapturedImage] = useState(null);
+  const [demographicsData, setDemographicsData] = useState(null);
 
   const trimmedName = name.trim();
   const trimmedLocation = location.trim();
@@ -79,15 +80,15 @@ export default function TestingPage() {
     setStep("choice");
   };
 
-if (step === "demographics") {
-    return (
-      <DemographicsScreen
-        onBack={handleBack}
-        onReset={() => console.log("Reset demographics selections")}
-        onConfirm={() => console.log("Confirm demographics (next screen not built yet)")}
-      />
-    );
-  }
+  if (step === "demographics") {
+      return (
+        <DemographicsScreen
+          data={demographicsData}
+          onBack={handleBack}
+          onConfirm={(selections) => console.log("Confirmed demographics:", selections)}
+        />
+      );
+    }
 
   if (step === "analysis") {
     return (
@@ -108,10 +109,16 @@ if (step === "demographics") {
   }
 
   if (step === "preparing-analysis") {
-    return (
-      <PreparingAnalysisScreen onReady={() => setStep("analysis")} />
-    );
-  }
+      return (
+        <PreparingAnalysisScreen
+          capturedImage={capturedImage}
+          onReady={(data) => {
+            setDemographicsData(data);
+            setStep("analysis");
+          }}
+        />
+      );
+    }
 
   if (step === "photo-confirm") {
     return (
@@ -139,11 +146,15 @@ if (step === "demographics") {
     return <CameraSetupScreen onReady={() => setStep("camera-capture")} />;
   }
 
-    if (step === "choice") {
+  if (step === "choice") {
       return (
         <ChoiceScreen
           onBack={handleBack}
           onCameraAllowed={() => setStep("camera-setup")}
+          onGallerySelected={(dataUrl) => {
+            setCapturedImage(dataUrl);
+            setStep("photo-confirm");
+          }}
         />
       );
     }

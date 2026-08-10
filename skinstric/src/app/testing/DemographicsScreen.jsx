@@ -1,36 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import DiamondNavLink from "@/components/DiamondNavLink";
 import CategorySidebar from "@/components/CategorySidebar";
 import ConfidenceRing from "@/components/ConfidenceRing";
 import OptionsList from "@/components/OptionsList";
+import { transformRace, transformAge, transformSex, topKey } from "@/lib/demographics";
 
-const RACE_OPTIONS = [
-  { key: "east-asian", label: "East Asian", percent: 96 },
-  { key: "white", label: "White", percent: 6 },
-  { key: "black", label: "Black", percent: 3 },
-  { key: "south-asian", label: "South Asian", percent: 2 },
-  { key: "latino-hispanic", label: "Latino Hispanic", percent: 0 },
-  { key: "south-east-asian", label: "South East Asian", percent: 0 },
-  { key: "middle-eastern", label: "Middle Eastern", percent: 0 },
-];
+export default function DemographicsScreen({ data, onBack, onConfirm }) {
+  const raceOptions = useMemo(() => transformRace(data?.race), [data]);
+  const ageOptions = useMemo(() => transformAge(data?.age), [data]);
+  const sexOptions = useMemo(() => transformSex(data?.gender), [data]);
 
-export default function DemographicsScreen({ onBack, onReset, onConfirm }) {
+  const defaults = useMemo(
+    () => ({
+      race: topKey(raceOptions),
+      age: topKey(ageOptions),
+      sex: topKey(sexOptions),
+    }),
+    [raceOptions, ageOptions, sexOptions]
+  );
+
   const [activeCategory, setActiveCategory] = useState("race");
-  const [selectedRace, setSelectedRace] = useState("east-asian");
+  const [selectedRace, setSelectedRace] = useState(defaults.race);
+  const [selectedAge, setSelectedAge] = useState(defaults.age);
+  const [selectedSex, setSelectedSex] = useState(defaults.sex);
+
+  const CATEGORIES = {
+    race: { heading: "Race", options: raceOptions },
+    age: { heading: "Age", options: ageOptions },
+    sex: { heading: "Sex", options: sexOptions },
+  };
+
+  const selections = { race: selectedRace, age: selectedAge, sex: selectedSex };
+  const setters = { race: setSelectedRace, age: setSelectedAge, sex: setSelectedSex };
+
+  const findOption = (categoryKey) =>
+    CATEGORIES[categoryKey].options.find((o) => o.key === selections[categoryKey]);
 
   const sidebarCategories = [
-    { key: "race", value: RACE_OPTIONS.find((o) => o.key === selectedRace)?.label ?? "", label: "Race" },
-    { key: "age", value: "20-29", label: "Age" },
-    { key: "sex", value: "Female", label: "Sex" },
+    { key: "race", value: findOption("race")?.label ?? "", label: "Race" },
+    { key: "age", value: findOption("age")?.label ?? "", label: "Age" },
+    { key: "sex", value: findOption("sex")?.label ?? "", label: "Sex" },
   ];
 
-  const currentPercent =
-    RACE_OPTIONS.find((o) => o.key === selectedRace)?.percent ?? 0;
-  const currentLabel =
-    RACE_OPTIONS.find((o) => o.key === selectedRace)?.label ?? "";
+  const activeOption = findOption(activeCategory);
+  const currentPercent = activeOption?.percent ?? 0;
+  const currentHeadline =
+    activeCategory === "age"
+      ? `${activeOption?.label ?? ""} y.o.`
+      : activeOption?.label ?? "";
+
+  const handleReset = () => {
+    setSelectedRace(defaults.race);
+    setSelectedAge(defaults.age);
+    setSelectedSex(defaults.sex);
+  };
 
   return (
     <main className="relative min-h-screen w-full overflow-hidden">
@@ -83,21 +109,19 @@ export default function DemographicsScreen({ onBack, onReset, onConfirm }) {
             letterSpacing: "-0.05em",
           }}
         >
-          {currentLabel}
+          {currentHeadline}
         </p>
         <div className="absolute" style={{ left: "66%", top: "22%" }}>
           <ConfidenceRing percent={currentPercent} />
         </div>
       </div>
 
-      {activeCategory === "race" && (
-        <OptionsList
-          heading="Race"
-          options={RACE_OPTIONS}
-          selectedKey={selectedRace}
-          onSelect={setSelectedRace}
-        />
-      )}
+      <OptionsList
+        heading={CATEGORIES[activeCategory].heading}
+        options={CATEGORIES[activeCategory].options}
+        selectedKey={selections[activeCategory]}
+        onSelect={setters[activeCategory]}
+      />
 
       <p
         className="absolute left-1/2 -translate-x-1/2 text-center text-[rgba(160,164,171,1)]"
@@ -109,16 +133,16 @@ export default function DemographicsScreen({ onBack, onReset, onConfirm }) {
       <div className="absolute inset-x-0 bottom-8 z-10 flex items-center justify-between px-8 md:bottom-10 md:px-10">
         <DiamondNavLink label="BACK" direction="left" href="/" onClick={onBack} />
         <div className="flex items-center gap-4">
-        <button
-        type="button"
-        onClick={onReset}
-        className="border border-[var(--color-ink)] bg-transparent px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-[var(--color-ink)] transition-opacity hover:opacity-70"
-        >
-        Reset
-        </button>
           <button
             type="button"
-            onClick={onConfirm}
+            onClick={handleReset}
+            className="border border-[var(--color-ink)] bg-transparent px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-[var(--color-ink)] transition-opacity hover:opacity-70"
+          >
+            Reset
+          </button>
+          <button
+            type="button"
+            onClick={() => onConfirm?.(selections)}
             className="bg-[var(--color-ink)] px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-[var(--color-canvas)] transition-opacity hover:opacity-80"
           >
             Confirm
