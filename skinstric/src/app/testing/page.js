@@ -1,194 +1,73 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import DiamondStep from "@/components/DiamondStep";
-import ChoiceScreen from "./ChoiceScreen";
-import CameraSetupScreen from "./CameraSetupScreen";
-import CameraCaptureScreen from "./CameraCaptureScreen";
-import PhotoConfirmScreen from "./PhotoConfirmScreen";
-import PreparingAnalysisScreen from "./PreparingAnalysisScreen";
-import AnalysisScreen from "./AnalysisScreen";
-import DemographicsScreen from "./DemographicsScreen";
+import DiamondBackdrop from "@/components/DiamondBackdrop";
+import DiamondNavLink from "@/components/DiamondNavLink";
+import SiteHeader from "@/components/SiteHeader";
 
-const TEXT_PATTERN = /^[A-Za-z][A-Za-z\s'-]*$/;
+export default function Home() {
+  const [hoveredSide, setHoveredSide] = useState(null);
 
-const PHASE_ONE_ENDPOINT =
-  "https://us-central1-api-skinstric-ai.cloudfunctions.net/skinstricPhaseOne";
-
-const NAME_KEY = "skinstric_name";
-const LOCATION_KEY = "skinstric_location";
-
-function readSaved(key) {
-  if (typeof window === "undefined") return "";
-  return window.localStorage.getItem(key) ?? "";
-}
-
-export default function TestingPage() {
-  const router = useRouter();
-  const [step, setStep] = useState("name");
-  const [name, setName] = useState(() => readSaved(NAME_KEY));
-  const [location, setLocation] = useState(() => readSaved(LOCATION_KEY));
-  const [locationPhase, setLocationPhase] = useState("input");
-  const [capturedImage, setCapturedImage] = useState(null);
-  const [demographicsData, setDemographicsData] = useState(null);
-  const [imageSource, setImageSource] = useState(null); // "camera" | "gallery"
-
-  const trimmedName = name.trim();
-  const trimmedLocation = location.trim();
-  const isNameValid = TEXT_PATTERN.test(trimmedName);
-  const isLocationValid = TEXT_PATTERN.test(trimmedLocation);
-
-  const handleResetHome = () => {
-    window.localStorage.removeItem(NAME_KEY);
-    window.localStorage.removeItem(LOCATION_KEY);
-    router.push("/");
-  };
-
-  const handleBackToName = () => setStep("name");
-  const handleBackToChoice = () => setStep("choice");
-  const handlePhotoConfirmBack = () =>
-    setStep(imageSource === "camera" ? "camera-capture" : "choice");
-  const handleAnalysisBack = () => setStep("photo-confirm");
-
-  const handleNameEnter = () => {
-    if (!isNameValid) return;
-    window.localStorage.setItem(NAME_KEY, trimmedName);
-    setStep("location");
-  };
-
-  const handleLocationChange = (next) => {
-    setLocation(next);
-    if (locationPhase !== "input") setLocationPhase("input");
-  };
-
-  const handleLocationEnter = async () => {
-    if (!isLocationValid || locationPhase !== "input") return;
-    window.localStorage.setItem(LOCATION_KEY, trimmedLocation);
-    setLocationPhase("loading");
-
-    try {
-      const response = await fetch(PHASE_ONE_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: trimmedName, location: trimmedLocation }),
-      });
-      const data = await response.json();
-      console.log("Phase 1 API response:", data);
-      setLocationPhase("success");
-    } catch (error) {
-      console.error("Phase 1 API request failed:", error);
-      setLocationPhase("input");
-    }
-  };
-
-  const handleProceedClick = () => {
-    setStep("choice");
-  };
-
-  if (step === "demographics") {
-    return (
-      <DemographicsScreen
-        data={demographicsData}
-        onBack={handleBackToChoice}
-        onConfirm={(selections) => console.log("Confirmed demographics:", selections)}
-      />
-    );
-  }
-
-  if (step === "analysis") {
-    return (
-      <AnalysisScreen
-        onBack={handleAnalysisBack}
-        onSelectQuadrant={(key) => {
-          if (key === "demographics") {
-            setStep("demographics");
-            return;
-          }
-          console.log("Selected quadrant:", key, "(detail screen not built yet)");
-        }}
-        onGetSummary={() => setStep("demographics")}
-      />
-    );
-  }
-
-  if (step === "preparing-analysis") {
-    return (
-      <PreparingAnalysisScreen
-        capturedImage={capturedImage}
-        onReady={(data) => {
-          setDemographicsData(data);
-          setStep("analysis");
-        }}
-      />
-    );
-  }
-
-  if (step === "photo-confirm") {
-    return (
-      <PhotoConfirmScreen
-        capturedImage={capturedImage}
-        onBack={handlePhotoConfirmBack}
-        onProceed={() => setStep("preparing-analysis")}
-      />
-    );
-  }
-
-  if (step === "camera-capture") {
-    return (
-      <CameraCaptureScreen
-        onBack={handleBackToChoice}
-        onTakePicture={(dataUrl) => {
-          setCapturedImage(dataUrl);
-          setImageSource("camera");
-          setStep("photo-confirm");
-        }}
-      />
-    );
-  }
-
-  if (step === "camera-setup") {
-    return <CameraSetupScreen onReady={() => setStep("camera-capture")} />;
-  }
-
-  if (step === "choice") {
-    return (
-      <ChoiceScreen
-        onBack={handleBackToName}
-        onCameraAllowed={() => setStep("camera-setup")}
-        onGallerySelected={(dataUrl) => {
-          setCapturedImage(dataUrl);
-          setImageSource("gallery");
-          setStep("photo-confirm");
-        }}
-      />
-    );
-  }
-
-  if (step === "location") {
-    return (
-      <DiamondStep
-        placeholder="Where are you from?"
-        value={location}
-        onChange={handleLocationChange}
-        onEnter={handleLocationEnter}
-        boxWidth={488}
-        phase={locationPhase}
-        onProceedClick={handleProceedClick}
-        onBack={handleResetHome}
-      />
-    );
-  }
+  const headlineShift =
+    hoveredSide === "left"
+      ? "calc(-50% + 25vw)"
+      : hoveredSide === "right"
+      ? "calc(-50% - 25vw)"
+      : "-50%";
+  const headlineAlign =
+    hoveredSide === "left" ? "right" : hoveredSide === "right" ? "left" : "center";
 
   return (
-    <DiamondStep
-      placeholder="Introduce Yourself"
-      value={name}
-      onChange={setName}
-      onEnter={handleNameEnter}
-      boxWidth={420}
-      phase="input"
-      onBack={handleResetHome}
-    />
+    <main className="relative min-h-screen w-full overflow-hidden">
+      <SiteHeader crumb="INTRO" showEnterCode />
+
+      <DiamondBackdrop hideSide={hoveredSide === "left" ? "right" : hoveredSide === "right" ? "left" : null} />
+
+      <div className="absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 items-center justify-between px-8 md:px-10">
+        <DiamondNavLink
+          label="DISCOVER A.I."
+          direction="left"
+          href="#discover"
+          emphasized={hoveredSide === "left"}
+          hidden={hoveredSide === "right"}
+          onMouseEnter={() => setHoveredSide("left")}
+          onMouseLeave={() => setHoveredSide(null)}
+        />
+        <DiamondNavLink
+          label="TAKE TEST"
+          direction="right"
+          href="/testing"
+          emphasized={hoveredSide === "right"}
+          hidden={hoveredSide === "left"}
+          onMouseEnter={() => setHoveredSide("right")}
+          onMouseLeave={() => setHoveredSide(null)}
+        />
+      </div>
+
+      <h1
+        className="pointer-events-none absolute left-1/2 top-1/2 z-10 w-[90vw] max-w-[680px] font-light text-[var(--color-ink)] transition-transform duration-700 ease-in-out"
+        style={{
+          fontSize: "clamp(2.5rem, 8vw, var(--text-h1-1920))",
+          lineHeight: "var(--text-h1-1920--line-height)",
+          letterSpacing: "var(--text-h1-1920--letter-spacing)",
+          transform: `translateX(${headlineShift}) translateY(-50%)`,
+          textAlign: headlineAlign,
+        }}
+      >
+        Sophisticated skincare
+      </h1>
+
+      <p
+        className="absolute bottom-8 left-8 z-10 max-w-[316px] uppercase text-[var(--color-ink)] md:bottom-10 md:left-10"
+        style={{
+          fontSize: "var(--text-caption-1920)",
+          lineHeight: "var(--text-caption-1920--line-height)",
+          letterSpacing: "var(--text-caption-1920--letter-spacing)",
+        }}
+      >
+        Skinstric developed an A.I. that creates a highly-personalised
+        routine tailored to what your skin needs.
+      </p>
+    </main>
   );
 }

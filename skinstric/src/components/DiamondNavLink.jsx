@@ -15,11 +15,18 @@ export default function DiamondNavLink({
   onClick,
   light = false,
   textOpacity = 0.7,
+  emphasized = false,
+  hidden = false,
+  onMouseEnter,
+  onMouseLeave,
 }) {
   const color = light ? "var(--color-canvas)" : "var(--color-ink)";
 
   const icon = (
-    <span className="relative flex h-11 w-11 shrink-0 items-center justify-center">
+    <span
+      className="relative flex h-11 w-11 shrink-0 items-center justify-center transition-transform duration-700 ease-in-out"
+      style={{ transform: emphasized ? "scale(1.2)" : "scale(1)" }}
+    >
       <span className="absolute inset-0 rotate-45 border" style={{ borderColor: color }} />
       <span className="relative">
         <Arrow direction={direction} color={color} />
@@ -47,8 +54,14 @@ export default function DiamondNavLink({
     
       <a href={href ?? "#"}
       onClick={handleClick}
-      className="group flex items-center gap-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
-      style={{ outlineColor: color }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className="group flex items-center gap-4 transition-opacity duration-700 ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
+      style={{
+        outlineColor: color,
+        opacity: hidden ? 0 : 1,
+        pointerEvents: hidden ? "none" : "auto",
+      }}
     >
       {direction === "left" ? (
         <>

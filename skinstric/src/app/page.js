@@ -1,17 +1,42 @@
+"use client";
+
+import { useState } from "react";
 import DiamondBackdrop from "@/components/DiamondBackdrop";
 import DiamondNavLink from "@/components/DiamondNavLink";
 import SiteHeader from "@/components/SiteHeader";
 
 export default function Home() {
+  const [hoveredSide, setHoveredSide] = useState(null); // "left" | "right" | null
+
+  const sign = hoveredSide === "left" ? 1 : hoveredSide === "right" ? -1 : 0;
+  const line1Shift = `${sign * 6}rem`;
+  const line2Shift = `${sign * 1.8}rem`;
+
   return (
     <main className="relative min-h-screen w-full overflow-hidden">
       <SiteHeader crumb="INTRO" showEnterCode />
 
-      <DiamondBackdrop />
+      <DiamondBackdrop hideSide={hoveredSide === "left" ? "right" : hoveredSide === "right" ? "left" : null} />
 
       <div className="absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 items-center justify-between px-8 md:px-10">
-        <DiamondNavLink label="DISCOVER A.I." direction="left" href="#discover" />
-        <DiamondNavLink label="TAKE TEST" direction="right" href="/testing" />
+        <DiamondNavLink
+          label="DISCOVER A.I."
+          direction="left"
+          href="#discover"
+          emphasized={hoveredSide === "left"}
+          hidden={hoveredSide === "right"}
+          onMouseEnter={() => setHoveredSide("left")}
+          onMouseLeave={() => setHoveredSide(null)}
+        />
+        <DiamondNavLink
+          label="TAKE TEST"
+          direction="right"
+          href="/testing"
+          emphasized={hoveredSide === "right"}
+          hidden={hoveredSide === "left"}
+          onMouseEnter={() => setHoveredSide("right")}
+          onMouseLeave={() => setHoveredSide(null)}
+        />
       </div>
 
       <h1
@@ -22,7 +47,18 @@ export default function Home() {
           letterSpacing: "var(--text-h1-1920--letter-spacing)",
         }}
       >
-        Sophisticated skincare
+        <span
+          className="block transition-transform duration-500 ease-in-out"
+          style={{ transform: `translateX(${line1Shift})` }}
+        >
+          Sophisticated
+        </span>
+        <span
+          className="block transition-transform duration-500 ease-in-out"
+          style={{ transform: `translateX(${line2Shift})` }}
+        >
+          skincare
+        </span>
       </h1>
 
       <p
