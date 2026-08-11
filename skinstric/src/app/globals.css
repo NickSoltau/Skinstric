@@ -71,6 +71,22 @@ body {
     transform: scale(1);
   }
 }
+/* Continuous diamond-backdrop rotation (frame 000's live reference
+   confirmed via DevTools): linear, infinite, no delay. Each ring
+   gets its own duration/base-angle applied inline by the diamond
+   components — this keyframe is just the shared 0-360 spin they
+   all reuse. transform-box/transform-origin are set inline per
+   element (fill-box + center), since SVG shapes need that to make
+   percentage-based transform-origin resolve to their own bounding
+   box instead of the SVG viewport. */
+@keyframes diamond-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *,

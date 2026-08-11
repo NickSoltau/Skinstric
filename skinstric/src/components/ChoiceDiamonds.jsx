@@ -1,3 +1,5 @@
+import { SPIN_TIERS } from "@/components/diamondSpin";
+
 const DIAMONDS = [
   { size: 405.18, opacity: 1 },
   { size: 444.34, opacity: 0.6 },
@@ -16,23 +18,29 @@ export default function ChoiceDiamonds() {
       style={{ width: DISPLAY_SIZE, height: DISPLAY_SIZE }}
     >
       <svg width="100%" height="100%" viewBox={`0 0 ${CANVAS} ${CANVAS}`}>
-        {DIAMONDS.map(({ size, opacity }) => {
+        {DIAMONDS.map(({ size, opacity }, index) => {
           const offset = (CANVAS - size) / 2;
+          const { duration, baseAngle } = SPIN_TIERS[index];
           return (
-            <rect
-              key={size}
-              x={offset}
-              y={offset}
-              width={size}
-              height={size}
-              fill="none"
-              stroke="var(--color-diamond-border)"
-              strokeWidth={2}
-              strokeOpacity={opacity}
-              strokeDasharray="1 5"
-              strokeLinecap="round"
-              transform={`rotate(45 ${CENTER} ${CENTER})`}
-            />
+            <g key={size} transform={`rotate(${45 + baseAngle} ${CENTER} ${CENTER})`}>
+              <rect
+                x={offset}
+                y={offset}
+                width={size}
+                height={size}
+                fill="none"
+                stroke="var(--color-diamond-border)"
+                strokeWidth={2}
+                strokeOpacity={opacity}
+                strokeDasharray="1 5"
+                strokeLinecap="round"
+                style={{
+                  transformBox: "fill-box",
+                  transformOrigin: "center",
+                  animation: `diamond-spin ${duration}s linear infinite`,
+                }}
+              />
+            </g>
           );
         })}
       </svg>

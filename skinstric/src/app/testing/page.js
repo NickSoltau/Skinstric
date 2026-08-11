@@ -5,12 +5,11 @@ import { useRouter } from "next/navigation";
 import DiamondStep from "@/components/DiamondStep";
 import ChoiceScreen from "./ChoiceScreen";
 import CameraSetupScreen from "./CameraSetupScreen";
-import CameraCaptureScreen from "./CameraCaptureScreen"
+import CameraCaptureScreen from "./CameraCaptureScreen";
 import PhotoConfirmScreen from "./PhotoConfirmScreen";
 import PreparingAnalysisScreen from "./PreparingAnalysisScreen";
 import AnalysisScreen from "./AnalysisScreen";
 import DemographicsScreen from "./DemographicsScreen";
-
 
 const TEXT_PATTERN = /^[A-Za-z][A-Za-z\s'-]*$/;
 
@@ -27,23 +26,30 @@ function readSaved(key) {
 
 export default function TestingPage() {
   const router = useRouter();
-  const [step, setStep] = useState("name"); // "name" | "location" | "choice" | "camera-setup" | "camera-capture" | "photo-confirm"  | "preparing-analysis" | "preparing-analysis" | "analysis" | "analysis" | "demographics"
+  const [step, setStep] = useState("name");
   const [name, setName] = useState(() => readSaved(NAME_KEY));
   const [location, setLocation] = useState(() => readSaved(LOCATION_KEY));
   const [locationPhase, setLocationPhase] = useState("input");
   const [capturedImage, setCapturedImage] = useState(null);
   const [demographicsData, setDemographicsData] = useState(null);
+  const [imageSource, setImageSource] = useState(null); // "camera" | "gallery"
 
   const trimmedName = name.trim();
   const trimmedLocation = location.trim();
   const isNameValid = TEXT_PATTERN.test(trimmedName);
   const isLocationValid = TEXT_PATTERN.test(trimmedLocation);
 
-  const handleBack = () => {
+  const handleResetHome = () => {
     window.localStorage.removeItem(NAME_KEY);
     window.localStorage.removeItem(LOCATION_KEY);
     router.push("/");
   };
+
+  const handleBackToName = () => setStep("name");
+  const handleBackToChoice = () => setStep("choice");
+  const handlePhotoConfirmBack = () =>
+    setStep(imageSource === "camera" ? "camera-capture" : "choice");
+  const handleAnalysisBack = () => setStep("photo-confirm");
 
   const handleNameEnter = () => {
     if (!isNameValid) return;
@@ -81,19 +87,19 @@ export default function TestingPage() {
   };
 
   if (step === "demographics") {
-      return (
-        <DemographicsScreen
-          data={demographicsData}
-          onBack={handleBack}
-          onConfirm={(selections) => console.log("Confirmed demographics:", selections)}
-        />
-      );
-    }
+    return (
+      <DemographicsScreen
+        data={demographicsData}
+        onBack={handleBackToChoice}
+        onConfirm={(selections) => console.log("Confirmed demographics:", selections)}
+      />
+    );
+  }
 
   if (step === "analysis") {
     return (
       <AnalysisScreen
-        onBack={handleBack}
+        onBack={handleAnalysisBack}
         onSelectQuadrant={(key) => {
           if (key === "demographics") {
             setStep("demographics");
@@ -101,63 +107,63 @@ export default function TestingPage() {
           }
           console.log("Selected quadrant:", key, "(detail screen not built yet)");
         }}
-        onGetSummary={() => {
-          console.log("Get summary (final summary screen not built yet)");
-        }}
+        onGetSummary={() => setStep("demographics")}
       />
     );
   }
 
   if (step === "preparing-analysis") {
-      return (
-        <PreparingAnalysisScreen
-          capturedImage={capturedImage}
-          onReady={(data) => {
-            setDemographicsData(data);
-            setStep("analysis");
-          }}
-        />
-      );
-    }
+    return (
+      <PreparingAnalysisScreen
+        capturedImage={capturedImage}
+        onReady={(data) => {
+          setDemographicsData(data);
+          setStep("analysis");
+        }}
+      />
+    );
+  }
 
   if (step === "photo-confirm") {
     return (
       <PhotoConfirmScreen
         capturedImage={capturedImage}
-        onBack={handleBack}
+        onBack={handlePhotoConfirmBack}
         onProceed={() => setStep("preparing-analysis")}
       />
     );
   }
 
   if (step === "camera-capture") {
-      return (
-        <CameraCaptureScreen
-          onBack={handleBack}
-          onTakePicture={(dataUrl) => {
-            setCapturedImage(dataUrl);
-            setStep("photo-confirm");
-          }}
-        />
-      );
-    }
+    return (
+      <CameraCaptureScreen
+        onBack={handleBackToChoice}
+        onTakePicture={(dataUrl) => {
+          setCapturedImage(dataUrl);
+          setImageSource("camera");
+          setStep("photo-confirm");
+        }}
+      />
+    );
+  }
 
   if (step === "camera-setup") {
     return <CameraSetupScreen onReady={() => setStep("camera-capture")} />;
   }
 
   if (step === "choice") {
-      return (
-        <ChoiceScreen
-          onBack={handleBack}
-          onCameraAllowed={() => setStep("camera-setup")}
-          onGallerySelected={(dataUrl) => {
-            setCapturedImage(dataUrl);
-            setStep("photo-confirm");
-          }}
-        />
-      );
-    }
+    return (
+      <ChoiceScreen
+        onBack={handleBackToName}
+        onCameraAllowed={() => setStep("camera-setup")}
+        onGallerySelected={(dataUrl) => {
+          setCapturedImage(dataUrl);
+          setImageSource("gallery");
+          setStep("photo-confirm");
+        }}
+      />
+    );
+  }
 
   if (step === "location") {
     return (
@@ -169,7 +175,7 @@ export default function TestingPage() {
         boxWidth={488}
         phase={locationPhase}
         onProceedClick={handleProceedClick}
-        onBack={handleBack}
+        onBack={handleResetHome}
       />
     );
   }
@@ -182,7 +188,7 @@ export default function TestingPage() {
       onEnter={handleNameEnter}
       boxWidth={420}
       phase="input"
-      onBack={handleBack}
+      onBack={handleResetHome}
     />
   );
 }

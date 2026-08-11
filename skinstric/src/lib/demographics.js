@@ -8,6 +8,7 @@ const RACE_LABELS = {
   "middle eastern": "Middle Eastern",
 };
 
+// Fixed chronological display order — Age is NOT sorted by percent.
 const AGE_BUCKETS = [
   { key: "0-9", sourceKeys: ["0-2", "3-9"] },
   { key: "10-19", sourceKeys: ["10-19"] },
@@ -36,10 +37,11 @@ export function transformRace(raceData) {
 
 export function transformAge(ageData) {
   if (!ageData) return [];
+  // NOTE: intentionally not sorted by percent — chronological order.
   return AGE_BUCKETS.map(({ key, sourceKeys }) => {
     const sum = sourceKeys.reduce((total, k) => total + (ageData[k] ?? 0), 0);
     return { key, label: key, percent: toPercent(sum) };
-  }).sort((a, b) => b.percent - a.percent);
+  });
 }
 
 export function transformSex(genderData) {

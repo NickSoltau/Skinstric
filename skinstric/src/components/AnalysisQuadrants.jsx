@@ -7,22 +7,22 @@ const QUADRANTS = [
   {
     key: "demographics",
     label: ["Demographics"],
-    tileCenter: { xPct: 48.34, yPct: 34.89 },
+    tileCenter: { xPct: 50.01, yPct: 38.22 },
   },
   {
     key: "skin-type-details",
     label: ["Skin Type", "Details"],
-    tileCenter: { xPct: 42.45, yPct: 46.66 },
+    tileCenter: { xPct: 44.12, yPct: 50.0 },
   },
   {
     key: "cosmetic-concerns",
     label: ["Cosmetic", "Concerns"],
-    tileCenter: { xPct: 54.16, yPct: 46.66 },
+    tileCenter: { xPct: 55.83, yPct: 50.0 },
   },
   {
     key: "weather",
     label: ["Weather"],
-    tileCenter: { xPct: 48.34, yPct: 58.43 },
+    tileCenter: { xPct: 50.01, yPct: 61.76 },
   },
 ];
 
