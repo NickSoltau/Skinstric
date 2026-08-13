@@ -1,12 +1,16 @@
 const REST_FILL = "rgba(243, 243, 244, 1)";
 const HOVER_FILL = "rgba(225, 225, 226, 1)";
 
-export default function CategorySidebar({ categories, activeKey, onSelect }) {
+export default function CategorySidebar({ categories, activeKey, onSelect, layout = "absolute" }) {
+  const wrapperClassName =
+    layout === "stacked"
+      ? "flex w-full flex-col gap-3"
+      : "absolute flex flex-col gap-3";
+  const wrapperStyle =
+    layout === "stacked" ? undefined : { left: "1.667%", top: "31.667%", width: "10.833%" };
+
   return (
-    <div
-      className="absolute flex flex-col gap-3"
-      style={{ left: "1.667%", top: "31.667%", width: "10.833%" }}
-    >
+    <div className={wrapperClassName} style={wrapperStyle}>
       {categories.map(({ key, value, label }) => {
         const isActive = key === activeKey;
         return (

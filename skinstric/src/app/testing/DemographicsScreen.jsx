@@ -62,74 +62,135 @@ export default function DemographicsScreen({ data, onBack, onConfirm }) {
     <main className="relative min-h-screen w-full overflow-hidden">
       <SiteHeader crumb="ANALYSIS" />
 
-      <div className="flex min-h-screen flex-col gap-6 px-6 pb-32 pt-24 md:contents">
-      <div className="absolute left-8 top-[86px] md:left-10">
+      {/* Mobile (below md): everything in normal document flow, stacked vertically */}
+      <div className="flex flex-col gap-6 px-6 pb-40 pt-24 md:hidden">
+        <div>
+          <p
+            className="uppercase text-[var(--color-ink)]"
+            style={{ fontSize: 16, lineHeight: "24px", fontWeight: 600, letterSpacing: "-0.02em" }}
+          >
+            A. I. Analysis
+          </p>
+          <p
+            className="uppercase text-[var(--color-ink)]"
+            style={{ fontSize: 44, lineHeight: "44px", fontWeight: 400, letterSpacing: "-0.06em", marginTop: 16 }}
+          >
+            Demographics
+          </p>
+          <p
+            className="uppercase text-[var(--color-ink)]"
+            style={{ fontSize: 14, lineHeight: "24px", fontWeight: 400, marginTop: 12 }}
+          >
+            Predicted Race &amp; Age
+          </p>
+        </div>
+
+        <CategorySidebar
+          layout="stacked"
+          categories={sidebarCategories}
+          activeKey={activeCategory}
+          onSelect={setActiveCategory}
+        />
+
+        <div className="border-t border-[var(--color-ink)]" style={{ background: "rgba(243, 243, 244, 1)" }}>
+          <p
+            className="p-4 text-[var(--color-ink)]"
+            style={{ fontSize: 32, lineHeight: "40px", letterSpacing: "-0.05em" }}
+          >
+            {currentHeadline}
+          </p>
+          <div className="flex justify-center pb-8">
+            <ConfidenceRing percent={currentPercent} />
+          </div>
+        </div>
+
+        <OptionsList
+          layout="stacked"
+          heading={CATEGORIES[activeCategory].heading}
+          options={CATEGORIES[activeCategory].options}
+          selectedKey={selections[activeCategory]}
+          onSelect={setters[activeCategory]}
+        />
+
         <p
-          className="uppercase text-[var(--color-ink)]"
-          style={{ fontSize: 16, lineHeight: "24px", fontWeight: 600, letterSpacing: "-0.02em" }}
+          className="text-center text-[rgba(160,164,171,1)]"
+          style={{ fontSize: 14, lineHeight: "22px", letterSpacing: "-0.02em" }}
         >
-          A. I. Analysis
-        </p>
-        <p
-          className="uppercase text-[var(--color-ink)]"
-          style={{ fontSize: 72, lineHeight: "64px", fontWeight: 400, letterSpacing: "-0.06em", marginTop: 16 }}
-        >
-          Demographics
-        </p>
-        <p
-          className="uppercase text-[var(--color-ink)]"
-          style={{ fontSize: 14, lineHeight: "24px", fontWeight: 400, marginTop: 12 }}
-        >
-          Predicted Race &amp; Age
+          If A.I. estimate is wrong, select the correct one.
         </p>
       </div>
 
-      <CategorySidebar
-        categories={sidebarCategories}
-        activeKey={activeCategory}
-        onSelect={setActiveCategory}
-      />
+      {/* Desktop (md and up): original absolute-positioned layout, unchanged */}
+      <div className="hidden md:block">
+        <div className="absolute left-8 top-[86px] md:left-10">
+          <p
+            className="uppercase text-[var(--color-ink)]"
+            style={{ fontSize: 16, lineHeight: "24px", fontWeight: 600, letterSpacing: "-0.02em" }}
+          >
+            A. I. Analysis
+          </p>
+          <p
+            className="uppercase text-[var(--color-ink)]"
+            style={{ fontSize: 72, lineHeight: "64px", fontWeight: 400, letterSpacing: "-0.06em", marginTop: 16 }}
+          >
+            Demographics
+          </p>
+          <p
+            className="uppercase text-[var(--color-ink)]"
+            style={{ fontSize: 14, lineHeight: "24px", fontWeight: 400, marginTop: 12 }}
+          >
+            Predicted Race &amp; Age
+          </p>
+        </div>
 
-      <div
-        className="absolute border-t border-[var(--color-ink)]"
-        style={{
-          left: "13.333%",
-          top: "31.667%",
-          width: "60.833%",
-          height: "56.667%",
-          background: "rgba(243, 243, 244, 1)",
-        }}
-      >
-        <p
-          className="absolute text-[var(--color-ink)]"
+        <CategorySidebar
+          layout="absolute"
+          categories={sidebarCategories}
+          activeKey={activeCategory}
+          onSelect={setActiveCategory}
+        />
+
+        <div
+          className="absolute border-t border-[var(--color-ink)]"
           style={{
-            top: 20,
-            left: 15,
-            fontSize: 40,
-            lineHeight: "40px",
-            letterSpacing: "-0.05em",
+            left: "13.333%",
+            top: "31.667%",
+            width: "60.833%",
+            height: "56.667%",
+            background: "rgba(243, 243, 244, 1)",
           }}
         >
-          {currentHeadline}
-        </p>
-        <div className="absolute" style={{ left: "66%", top: "22%" }}>
-          <ConfidenceRing percent={currentPercent} />
+          <p
+            className="absolute text-[var(--color-ink)]"
+            style={{
+              top: 20,
+              left: 15,
+              fontSize: 40,
+              lineHeight: "40px",
+              letterSpacing: "-0.05em",
+            }}
+          >
+            {currentHeadline}
+          </p>
+          <div className="absolute" style={{ left: "66%", top: "22%" }}>
+            <ConfidenceRing percent={currentPercent} />
+          </div>
         </div>
-      </div>
 
-      <OptionsList
-        heading={CATEGORIES[activeCategory].heading}
-        options={CATEGORIES[activeCategory].options}
-        selectedKey={selections[activeCategory]}
-        onSelect={setters[activeCategory]}
-      />
+        <OptionsList
+          layout="absolute"
+          heading={CATEGORIES[activeCategory].heading}
+          options={CATEGORIES[activeCategory].options}
+          selectedKey={selections[activeCategory]}
+          onSelect={setters[activeCategory]}
+        />
 
-      <p
-        className="absolute left-1/2 -translate-x-1/2 text-center text-[rgba(160,164,171,1)]"
-        style={{ bottom: 42, fontSize: 16, lineHeight: "24px", letterSpacing: "-0.02em" }}
-      >
-        If A.I. estimate is wrong, select the correct one.
-      </p>
+        <p
+          className="absolute left-1/2 -translate-x-1/2 text-center text-[rgba(160,164,171,1)]"
+          style={{ bottom: 42, fontSize: 16, lineHeight: "24px", letterSpacing: "-0.02em" }}
+        >
+          If A.I. estimate is wrong, select the correct one.
+        </p>
       </div>
 
       <div className="absolute inset-x-0 bottom-8 z-10 flex items-center justify-between px-8 md:bottom-10 md:px-10">

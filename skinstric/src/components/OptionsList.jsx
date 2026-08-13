@@ -10,18 +10,24 @@ function RadioMarker({ filled }) {
   );
 }
 
-export default function OptionsList({ heading, options, selectedKey, onSelect }) {
+export default function OptionsList({ heading, options, selectedKey, onSelect, layout = "absolute" }) {
+  const wrapperClassName =
+    layout === "stacked"
+      ? "w-full border-t border-[var(--color-ink)]"
+      : "absolute border-t border-[var(--color-ink)]";
+  const wrapperStyle =
+    layout === "stacked"
+      ? { background: "rgba(243, 243, 244, 1)" }
+      : {
+          left: "75%",
+          top: "31.667%",
+          width: "23.333%",
+          height: "56.667%",
+          background: "rgba(243, 243, 244, 1)",
+        };
+
   return (
-    <div
-      className="absolute border-t border-[var(--color-ink)]"
-      style={{
-        left: "75%",
-        top: "31.667%",
-        width: "23.333%",
-        height: "56.667%",
-        background: "rgba(243, 243, 244, 1)",
-      }}
-    >
+    <div className={wrapperClassName} style={wrapperStyle}>
       <div
         className="flex items-center justify-between px-4 py-1.5 uppercase text-[var(--color-ink)]/80"
         style={{ fontSize: 16, lineHeight: "24px", fontWeight: 500, letterSpacing: "-0.02em" }}
