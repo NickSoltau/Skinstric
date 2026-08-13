@@ -30,7 +30,13 @@ export default function AnalysisScreen({ onBack, onSelectQuadrant, onGetSummary 
 
       <div className="absolute inset-x-0 bottom-8 z-10 flex items-center justify-between px-8 md:bottom-10 md:px-10">
         <DiamondNavLink label="BACK" direction="left" href="/" onClick={onBack} />
-        <DiamondNavLink label="GET SUMMARY" direction="right" href="#" onClick={onGetSummary} />
+        <DiamondNavLink
+          label="GET SUMMARY"
+          mobileLabel="SUM"
+          direction="right"
+          href="#"
+          onClick={onGetSummary}
+        />
       </div>
     </main>
   );
