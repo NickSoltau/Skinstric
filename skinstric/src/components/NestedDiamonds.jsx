@@ -1,9 +1,9 @@
 import { SPIN_TIERS } from "@/components/diamondSpin";
 
 const DIAMONDS = [
-  { size: 602, opacity: 1 },
-  { size: 682, opacity: 0.6 },
-  { size: 762, opacity: 0.3 },
+  { size: 602, opacity: 1 }, // small
+  { size: 682, opacity: 0.6 }, // medium
+  { size: 762, opacity: 0.3 }, // large
 ];
 
 const CANVAS = 1078;

@@ -1,12 +1,6 @@
-// A 602x602 square rotated 45deg has a diagonal of ~852px (602*sqrt(2)).
-// The SVG canvas has to be at least that big, or the rotated corners
-// clip against the SVG's own viewBox — that was the "disappearing
-// lines" bug. The rect is centered inside the larger canvas so its
-// own center (and therefore the diamond's point) stays anchored at
-// the same spot as before.
 const CANVAS = 852;
 const RECT_SIZE = 600;
-const RECT_OFFSET = (CANVAS - RECT_SIZE) / 2; // 126
+const RECT_OFFSET = (CANVAS - RECT_SIZE) / 2;
 
 function Diamond({ side }) {
   return (

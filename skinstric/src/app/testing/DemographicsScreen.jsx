@@ -62,6 +62,7 @@ export default function DemographicsScreen({ data, onBack, onConfirm }) {
     <main className="relative min-h-screen w-full overflow-hidden">
       <SiteHeader crumb="ANALYSIS" />
 
+      <div className="flex min-h-screen flex-col gap-6 px-6 pb-32 pt-24 md:contents">
       <div className="absolute left-8 top-[86px] md:left-10">
         <p
           className="uppercase text-[var(--color-ink)]"
@@ -129,6 +130,7 @@ export default function DemographicsScreen({ data, onBack, onConfirm }) {
       >
         If A.I. estimate is wrong, select the correct one.
       </p>
+      </div>
 
       <div className="absolute inset-x-0 bottom-8 z-10 flex items-center justify-between px-8 md:bottom-10 md:px-10">
         <DiamondNavLink label="BACK" direction="left" href="/" onClick={onBack} />

@@ -54,6 +54,7 @@ export default function ChoiceScreen({ onBack, onCameraAllowed, onGallerySelecte
         TO START ANALYSIS
       </p>
 
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-16 px-6 md:contents">
       <ChoiceOption
         variant="camera"
         onClick={cameraDialogOpen ? undefined : handleCameraClick}
@@ -83,6 +84,7 @@ export default function ChoiceScreen({ onBack, onCameraAllowed, onGallerySelecte
         dotOffset={{ top: 99, left: -103 }}
         muted={cameraDialogOpen}
       />
+      </div>
 
       <div className="absolute inset-x-0 bottom-8 z-10 flex items-center justify-between px-8 md:bottom-10 md:px-10">
         <DiamondNavLink label="BACK" direction="left" href="/" onClick={onBack} />
