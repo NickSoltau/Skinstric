@@ -54,36 +54,68 @@ export default function ChoiceScreen({ onBack, onCameraAllowed, onGallerySelecte
         TO START ANALYSIS
       </p>
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-16 px-6 md:contents">
-      <ChoiceOption
-        variant="camera"
-        onClick={cameraDialogOpen ? undefined : handleCameraClick}
-        centerXPercent={25}
-        label={["ALLOW A.I.", "TO SCAN YOUR FACE"]}
-        labelAlign="left"
-        labelWidth={167}
-        labelOffset={{ top: -115, left: 112 }}
-        dotOffset={{ top: -95.5, left: 103.5 }}
-        ringSize={cameraDialogOpen ? 130.29 : 116.57}
-        circleSize={cameraDialogOpen ? 114 : 102}
-        overlay={
-          cameraDialogOpen ? (
-            <CameraPermissionDialog onDeny={handleDeny} onAllow={handleAllow} />
-          ) : null
-        }
-      />
+      {/* Mobile (below sm): stacked vertically, normal document flow */}
+      <div className="flex min-h-screen flex-col items-center justify-center gap-16 px-6 pb-32 pt-24 sm:hidden">
+        <ChoiceOption
+          variant="camera"
+          onClick={cameraDialogOpen ? undefined : handleCameraClick}
+          label={["ALLOW A.I.", "TO SCAN YOUR FACE"]}
+          labelAlign="left"
+          labelWidth={167}
+          labelOffset={{ top: -115, left: 112 }}
+          dotOffset={{ top: -95.5, left: 103.5 }}
+          ringSize={cameraDialogOpen ? 130.29 : 116.57}
+          circleSize={cameraDialogOpen ? 114 : 102}
+          overlay={
+            cameraDialogOpen ? (
+              <CameraPermissionDialog onDeny={handleDeny} onAllow={handleAllow} />
+            ) : null
+          }
+        />
 
-      <ChoiceOption
-        variant="gallery"
-        onClick={handleGalleryClick}
-        centerXPercent={75}
-        label={["ALLOW A.I.", "ACCESS GALLERY"]}
-        labelAlign="right"
-        labelWidth={136}
-        labelOffset={{ top: 85, left: -247 }}
-        dotOffset={{ top: 99, left: -103 }}
-        muted={cameraDialogOpen}
-      />
+        <ChoiceOption
+          variant="gallery"
+          onClick={handleGalleryClick}
+          label={["ALLOW A.I.", "ACCESS GALLERY"]}
+          labelAlign="right"
+          labelWidth={136}
+          labelOffset={{ top: 85, left: -247 }}
+          dotOffset={{ top: 99, left: -103 }}
+          muted={cameraDialogOpen}
+        />
+      </div>
+
+      {/* Desktop (sm and up): original absolute layout, unchanged */}
+      <div className="absolute inset-0 hidden sm:contents">
+        <ChoiceOption
+          variant="camera"
+          onClick={cameraDialogOpen ? undefined : handleCameraClick}
+          centerXPercent={25}
+          label={["ALLOW A.I.", "TO SCAN YOUR FACE"]}
+          labelAlign="left"
+          labelWidth={167}
+          labelOffset={{ top: -115, left: 112 }}
+          dotOffset={{ top: -95.5, left: 103.5 }}
+          ringSize={cameraDialogOpen ? 130.29 : 116.57}
+          circleSize={cameraDialogOpen ? 114 : 102}
+          overlay={
+            cameraDialogOpen ? (
+              <CameraPermissionDialog onDeny={handleDeny} onAllow={handleAllow} />
+            ) : null
+          }
+        />
+
+        <ChoiceOption
+          variant="gallery"
+          onClick={handleGalleryClick}
+          centerXPercent={75}
+          label={["ALLOW A.I.", "ACCESS GALLERY"]}
+          labelAlign="right"
+          labelWidth={136}
+          labelOffset={{ top: 85, left: -247 }}
+          dotOffset={{ top: 99, left: -103 }}
+          muted={cameraDialogOpen}
+        />
       </div>
 
       <div className="absolute inset-x-0 bottom-8 z-10 flex items-center justify-between px-8 md:bottom-10 md:px-10">
