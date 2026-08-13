@@ -1,8 +1,105 @@
+"use client";
+
+import { useLayoutEffect, useRef, useState } from "react";
 import DiamondBackdrop from "@/components/DiamondBackdrop";
 import DiamondNavLink from "@/components/DiamondNavLink";
 import SiteHeader from "@/components/SiteHeader";
 
+const EDGE_INSET_PX = 32;
+const DURATION_MS = 700;
+
+function AnimatedHeadline({ align }) {
+  const line1Ref = useRef(null);
+  const line2Ref = useRef(null);
+  const [layout, setLayout] = useState({ line1: 0, line2: 0, containerLeft: 0 });
+
+  useLayoutEffect(() => {
+    function measure() {
+      const w1 = line1Ref.current?.getBoundingClientRect().width ?? 0;
+      const w2 = line2Ref.current?.getBoundingClientRect().width ?? 0;
+      const blockWidth = Math.max(w1, w2);
+      const viewportWidth = window.innerWidth;
+
+      function lineOffset(lineWidth) {
+        if (align === "left") return 0;
+        if (align === "right") return blockWidth - lineWidth;
+        return (blockWidth - lineWidth) / 2;
+      }
+
+      let containerLeft;
+      if (align === "left") {
+        containerLeft = EDGE_INSET_PX;
+      } else if (align === "right") {
+        containerLeft = viewportWidth - EDGE_INSET_PX - blockWidth;
+      } else {
+        containerLeft = (viewportWidth - blockWidth) / 2;
+      }
+
+      setLayout({ line1: lineOffset(w1), line2: lineOffset(w2), containerLeft });
+    }
+
+    measure();
+    window.addEventListener("resize", measure);
+
+    // Re-measure once webfonts finish loading, in case fallback-font
+    // widths differ from the real font (relevant once Roobert TRIAL
+    // is licensed in).
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(measure);
+    }
+
+    return () => window.removeEventListener("resize", measure);
+  }, [align]);
+
+  return (
+    <h1
+      className="pointer-events-none absolute top-1/2 z-10 w-max font-light text-[var(--color-ink)]"
+      style={{
+        fontSize: "clamp(2.5rem, 8vw, var(--text-h1-1920))",
+        lineHeight: "var(--text-h1-1920--line-height)",
+        letterSpacing: "var(--text-h1-1920--letter-spacing)",
+        left: `${layout.containerLeft}px`,
+        transform: "translateY(-50%)",
+        transition: `left ${DURATION_MS}ms ease-in-out`,
+      }}
+    >
+      <span
+        ref={line1Ref}
+        style={{
+          display: "block",
+          width: "max-content",
+          whiteSpace: "nowrap",
+          transform: `translateX(${layout.line1}px)`,
+          transition: `transform ${DURATION_MS}ms ease-in-out`,
+        }}
+      >
+        Sophisticated
+      </span>
+      <span
+        ref={line2Ref}
+        style={{
+          display: "block",
+          width: "max-content",
+          whiteSpace: "nowrap",
+          transform: `translateX(${layout.line2}px)`,
+          transition: `transform ${DURATION_MS}ms ease-in-out`,
+        }}
+      >
+        skincare
+      </span>
+    </h1>
+  );
+}
+
 export default function Home() {
+  const [hoveredSide, setHoveredSide] = useState(null);
+
+  const fadedSide =
+    hoveredSide === "left" ? "right" : hoveredSide === "right" ? "left" : null;
+
+  const headlineAlign =
+    hoveredSide === "left" ? "right" : hoveredSide === "right" ? "left" : "center";
+
   return (
     <main className="relative min-h-screen w-full overflow-hidden">
       <SiteHeader crumb="INTRO" showEnterCode />
@@ -66,23 +163,28 @@ export default function Home() {
       </div>
 
       <div className="hidden lg:block">
-        <DiamondBackdrop />
+        <DiamondBackdrop fadedSide={fadedSide} />
 
         <div className="absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 items-center justify-between px-8 md:px-10">
-          <DiamondNavLink label="DISCOVER A.I." direction="left" href="#discover" />
-          <DiamondNavLink label="TAKE TEST" direction="right" href="/testing" />
+          <DiamondNavLink
+            label="DISCOVER A.I."
+            direction="left"
+            href="#discover"
+            onMouseEnter={() => setHoveredSide("left")}
+            onMouseLeave={() => setHoveredSide(null)}
+            fadedOut={fadedSide === "left"}
+          />
+          <DiamondNavLink
+            label="TAKE TEST"
+            direction="right"
+            href="/testing"
+            onMouseEnter={() => setHoveredSide("right")}
+            onMouseLeave={() => setHoveredSide(null)}
+            fadedOut={fadedSide === "right"}
+          />
         </div>
 
-        <h1
-          className="pointer-events-none absolute left-1/2 top-1/2 z-10 w-[90vw] max-w-[680px] -translate-x-1/2 -translate-y-1/2 text-center font-light text-[var(--color-ink)]"
-          style={{
-            fontSize: "clamp(2.5rem, 8vw, var(--text-h1-1920))",
-            lineHeight: "var(--text-h1-1920--line-height)",
-            letterSpacing: "var(--text-h1-1920--letter-spacing)",
-          }}
-        >
-          Sophisticated skincare
-        </h1>
+        <AnimatedHeadline align={headlineAlign} />
 
         <p
           className="absolute bottom-8 left-8 z-10 max-w-[316px] uppercase text-[var(--color-ink)] md:bottom-10 md:left-10"
