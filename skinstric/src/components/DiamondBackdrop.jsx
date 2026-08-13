@@ -1,18 +1,23 @@
+// A 602x602 square rotated 45deg has a diagonal of ~852px (602*sqrt(2)).
+// The SVG canvas has to be at least that big, or the rotated corners
+// clip against the SVG's own viewBox — that was the "disappearing
+// lines" bug. The rect is centered inside the larger canvas so its
+// own center (and therefore the diamond's point) stays anchored at
+// the same spot as before.
 const CANVAS = 852;
 const RECT_SIZE = 600;
-const RECT_OFFSET = (CANVAS - RECT_SIZE) / 2;
+const RECT_OFFSET = (CANVAS - RECT_SIZE) / 2; // 126
 
-function Diamond({ side, hidden }) {
+function Diamond({ side }) {
   return (
     <svg
       width={CANVAS}
       height={CANVAS}
       viewBox={`0 0 ${CANVAS} ${CANVAS}`}
-      className="absolute top-1/2 transition-opacity duration-700 ease-in-out"
+      className="absolute top-1/2"
       style={{
         [side]: 0,
         transform: `translate(${side === "left" ? "-50%" : "50%"}, -50%)`,
-        opacity: hidden ? 0 : 1,
       }}
     >
       <rect
@@ -31,11 +36,11 @@ function Diamond({ side, hidden }) {
   );
 }
 
-export default function DiamondBackdrop({ hideSide = null }) {
+export default function DiamondBackdrop() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      <Diamond side="left" hidden={hideSide === "left"} />
-      <Diamond side="right" hidden={hideSide === "right"} />
+      <Diamond side="left" />
+      <Diamond side="right" />
     </div>
   );
 }
